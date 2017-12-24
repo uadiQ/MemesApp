@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -16,9 +17,9 @@
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="N4W-ec-Yla">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="G9T-tj-fO2">
-                            <size key="itemSize" width="50" height="50"/>
+                            <size key="itemSize" width="150" height="150"/>
                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
@@ -30,16 +31,67 @@
                         </connections>
                     </collectionView>
                     <navigationItem key="navigationItem" id="uId-28-Au9">
-                        <barButtonItem key="rightBarButtonItem" title="Add Meme" id="VTm-O0-LfY">
+                        <barButtonItem key="rightBarButtonItem" title="+" id="bIg-bE-vof">
+                            <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <connections>
-                                <segue destination="Im5-gg-Cem" kind="show" id="Qee-QY-cXc"/>
+                                <segue destination="Im5-gg-Cem" kind="show" identifier="addMeme" id="TD0-gK-K8B"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <segue destination="sJM-Hr-5Dc" kind="show" identifier="showDetails" id="JG6-Gs-qIY"/>
+                    </connections>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tfd-mc-iEW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="192.80000000000001" y="124.58770614692655"/>
+        </scene>
+        <!--Details-->
+        <scene sceneID="Kkb-f9-gRw">
+            <objects>
+                <viewController title="Details" id="sJM-Hr-5Dc" customClass="MemeDetailsViewController" customModule="MemesApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="jAm-nf-Z8W">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ZDT-np-pHb">
+                                <rect key="frame" x="0.0" y="120" width="375" height="547"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L5i-8Q-vHE">
+                                <rect key="frame" x="0.0" y="64" width="375" height="36"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <constraints>
+                            <constraint firstItem="ZDT-np-pHb" firstAttribute="bottom" secondItem="o4o-7l-cz6" secondAttribute="bottom" priority="750" id="79d-LM-7U3"/>
+                            <constraint firstItem="L5i-8Q-vHE" firstAttribute="top" secondItem="o4o-7l-cz6" secondAttribute="top" id="IYS-wx-iLA"/>
+                            <constraint firstItem="ZDT-np-pHb" firstAttribute="trailing" secondItem="o4o-7l-cz6" secondAttribute="trailing" id="J8K-hV-GHi"/>
+                            <constraint firstItem="ZDT-np-pHb" firstAttribute="leading" secondItem="o4o-7l-cz6" secondAttribute="leading" id="L0j-yJ-WNZ"/>
+                            <constraint firstItem="ZDT-np-pHb" firstAttribute="top" secondItem="L5i-8Q-vHE" secondAttribute="bottom" constant="20" id="ZaQ-nd-9n9"/>
+                            <constraint firstItem="L5i-8Q-vHE" firstAttribute="trailing" secondItem="o4o-7l-cz6" secondAttribute="trailing" id="s6p-X8-dsx"/>
+                            <constraint firstItem="L5i-8Q-vHE" firstAttribute="leading" secondItem="o4o-7l-cz6" secondAttribute="leading" id="wHV-CB-ik6"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="o4o-7l-cz6"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="gHI-xd-Cki">
+                        <barButtonItem key="rightBarButtonItem" title="Delete" id="VZJ-3k-dIv">
+                            <color key="tintColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <connections>
+                                <action selector="deletePressed:" destination="sJM-Hr-5Dc" id="Hui-ZJ-npM"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="ibMemeImage" destination="ZDT-np-pHb" id="csv-CJ-3bJ"/>
+                        <outlet property="ibMemeText" destination="L5i-8Q-vHE" id="lrl-Lz-K0W"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0mz-PU-4iT" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="193" y="858"/>
         </scene>
         <!--Add Meme-->
         <scene sceneID="wxH-5y-mHT">
@@ -48,9 +100,9 @@
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="JCR-4U-CQa">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="A5x-db-eMD">
-                            <size key="itemSize" width="150" height="150"/>
+                            <size key="itemSize" width="100" height="100"/>
                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>

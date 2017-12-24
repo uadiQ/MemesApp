@@ -20,23 +20,14 @@ class MemeCollectionViewCell: UICollectionViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        NotificationCenter.default.addObserver(self, selector: #selector(imageLoadedToCell), name: .ImageLoadedToCell, object: nil)
-        ibMemeImage.image = #imageLiteral(resourceName: "placeholder")
+        //ibMemeImage.image = #imageLiteral(resourceName: "placeholder")
     }
 
     func update(meme: Meme) {
+        ibMemeImage.image = #imageLiteral(resourceName: "placeholder")
         ibMemeTitle.text = meme.name
-        Alamofire.request(meme.urlString).responseImage { response in
-            guard let imageToLoad = response.value else { print("Couldn't load image"); return }
-            self.image = imageToLoad
-            NotificationCenter.default.post(name: .ImageLoadedToCell, object: nil)
-        }
-    }
-}
+       // let url = URL(string: meme.urlString)!
+        self.ibMemeImage.af_setImage(withURL: meme.url, placeholderImage: #imageLiteral(resourceName: "placeholder"))
 
-extension MemeCollectionViewCell {
-    @objc func imageLoadedToCell() {
-        self.ibMemeImage.image = image
-        self.layoutIfNeeded()
     }
 }

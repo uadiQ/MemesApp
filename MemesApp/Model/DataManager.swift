@@ -37,4 +37,7 @@ final class DataManager {
         NotificationCenter.default.post(name: .MemeDeleted, object: nil)
     }
     
+    func getMeme(at indexPath: IndexPath) -> Meme {
+        return memesArray[indexPath.item]
+    }
 }

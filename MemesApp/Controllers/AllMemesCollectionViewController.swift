@@ -9,6 +9,7 @@
 import UIKit
 import Alamofire
 import SwiftyJSON
+import PKHUD
 
 class AllMemesCollectionViewController: UICollectionViewController {
     
@@ -25,17 +26,19 @@ class AllMemesCollectionViewController: UICollectionViewController {
     }
     
     private func loadMemes() {
+        HUD.show(.progress)
         Alamofire.request("https://api.imgflip.com/get_memes").responseJSON { response in
             switch response.result {
             case .success(let value):
                 //print(value)
                 let jsonResponse = JSON(value)
-                guard let memesJSONArray = jsonResponse["data"]["memes"].array else { fatalError("Didnt turn into array") }
+                guard let memesJSONArray = jsonResponse["data"]["memes"].array else { fatalError("Didn't turn into array") }
                 for jsonMeme in memesJSONArray {
                     guard let meme = Meme(json: jsonMeme) else { print("Meme hasn't been created"); continue }
                     self.allMemesArray.append(meme)
                 }
                 print(self.allMemesArray)
+                HUD.hide()
                 NotificationCenter.default.post(name: .AllMemesLoaded, object: nil)
                 
             case .failure(let error):
@@ -58,57 +61,40 @@ class AllMemesCollectionViewController: UICollectionViewController {
         // Pass the selected object to the new view controller.
     }
     */
+}
 
-    // MARK: UICollectionViewDataSource
-
+// MARK: UICollectionViewDataSource & UICollectionViewDelegate
+extension AllMemesCollectionViewController {
+    
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
-
+    
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return allMemesArray.count
     }
-
+    
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MemeCollectionViewCell.reuseID, for: indexPath) as? MemeCollectionViewCell else { fatalError("Cell with wrong id") }
-    
+        
         let meme = allMemesArray[indexPath.item]
         cell.update(meme: meme)
         return cell
     }
-
-    // MARK: UICollectionViewDelegate
-
-    /*
-    // Uncomment this method to specify if the specified item should be highlighted during tracking
-    override func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment this method to specify if the specified item should be selected
-    override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-    override func collectionView(_ collectionView: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
     
+     override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
+     return false
+     }
+     
+     override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
+     }
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        DataManager.instance.addMeme(meme: allMemesArray[indexPath.item])
+        navigationController?.popViewController(animated: true)
     }
-    */
-
 }
+
 // MARK: - Notifications
 extension AllMemesCollectionViewController {
     @objc func allMemesLoaded() {

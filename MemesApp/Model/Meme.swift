@@ -14,10 +14,11 @@ import AlamofireImage
 struct Meme {
     let id: Int
     let urlString: String
-   // var image: UIImage
+    let url: URL
     let name: String
     let height: Int
     let width: Int
+    //let image: UIImage?
 }
 
 extension Meme {
@@ -27,5 +28,6 @@ extension Meme {
         self.id = json["id"].intValue
         self.urlString = json["url"].stringValue
         self.width = json["width"].intValue
+        self.url = json["url"].url!
     }
 }
