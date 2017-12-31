@@ -11,23 +11,30 @@ import SwiftyJSON
 import Alamofire
 import AlamofireImage
 
-struct Meme {
+struct Meme: Equatable {
+    
     let id: Int
-    let urlString: String
+    //let urlString: String
     let url: URL
     let name: String
     let height: Int
     let width: Int
-    //let image: UIImage?
 }
 
 extension Meme {
     init?(json: JSON) {
+        guard let url = json["url"].url else { return nil }
         self.height = json["height"].intValue
         self.name = json["name"].stringValue
         self.id = json["id"].intValue
-        self.urlString = json["url"].stringValue
+        //self.urlString = json["url"].stringValue
         self.width = json["width"].intValue
-        self.url = json["url"].url!
+        self.url = url
+    }
+}
+
+extension Meme {
+    static func == (lhs: Meme, rhs: Meme) -> Bool {
+        return lhs.id == rhs.id
     }
 }

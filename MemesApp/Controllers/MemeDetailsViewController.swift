@@ -24,7 +24,9 @@ class MemeDetailsViewController: UIViewController {
     }
 
     @IBAction func deletePressed(_ sender: Any) {
-        DataManager.instance.deleteMeme(meme: meme!)
+        guard let deletingMeme = meme else { return }
+        guard let deletingIndex = DataManager.instance.favMemesArray.index(of: deletingMeme) else { print("Cannot delete notexisting meme"); return }
+        DataManager.instance.deleteMeme(at: deletingIndex)
         navigationController?.popViewController(animated: true)
     }
     

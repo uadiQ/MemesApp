@@ -12,40 +12,15 @@ import SwiftyJSON
 import PKHUD
 
 class AllMemesCollectionViewController: UICollectionViewController {
-    
-    private var allMemesArray: [Meme] = []
-
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Add Meme"
-        loadMemes()
+        HUD.showProgressWithAutoHide(timeOutTime: 30)
+        DataManager.instance.loadAllMemes()
         NotificationCenter.default.addObserver(self, selector: #selector(allMemesLoaded), name: .AllMemesLoaded, object: nil)
 
         // Register cell classes
         collectionView?.register(MemeCollectionViewCell.nib, forCellWithReuseIdentifier: MemeCollectionViewCell.reuseID)
-    }
-    
-    private func loadMemes() {
-        HUD.show(.progress)
-        Alamofire.request("https://api.imgflip.com/get_memes").responseJSON { response in
-            switch response.result {
-            case .success(let value):
-                //print(value)
-                let jsonResponse = JSON(value)
-                guard let memesJSONArray = jsonResponse["data"]["memes"].array else { fatalError("Didn't turn into array") }
-                for jsonMeme in memesJSONArray {
-                    guard let meme = Meme(json: jsonMeme) else { print("Meme hasn't been created"); continue }
-                    self.allMemesArray.append(meme)
-                }
-                print(self.allMemesArray)
-                HUD.hide()
-                NotificationCenter.default.post(name: .AllMemesLoaded, object: nil)
-                
-            case .failure(let error):
-                print(error)
-            }
-        
-        }
     }
     
     private func refreshData() {
@@ -71,13 +46,13 @@ extension AllMemesCollectionViewController {
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return allMemesArray.count
+        return DataManager.instance.allMemesArray.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MemeCollectionViewCell.reuseID, for: indexPath) as? MemeCollectionViewCell else { fatalError("Cell with wrong id") }
         
-        let meme = allMemesArray[indexPath.item]
+        let meme = DataManager.instance.allMemesArray[indexPath.item]
         cell.update(meme: meme)
         return cell
     }
@@ -90,7 +65,7 @@ extension AllMemesCollectionViewController {
      }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        DataManager.instance.addMeme(meme: allMemesArray[indexPath.item])
+        DataManager.instance.addMeme(meme: DataManager.instance.allMemesArray[indexPath.item])
         navigationController?.popViewController(animated: true)
     }
 }
@@ -98,6 +73,7 @@ extension AllMemesCollectionViewController {
 // MARK: - Notifications
 extension AllMemesCollectionViewController {
     @objc func allMemesLoaded() {
+        HUD.hide()
         refreshData()
     }
 }
