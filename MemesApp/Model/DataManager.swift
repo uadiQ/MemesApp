@@ -10,17 +10,20 @@ import UIKit
 import Alamofire
 import SwiftyJSON
 import PKHUD
+import KeychainSwift
 
 final class DataManager {
     static let instance = DataManager()
-    private init() { }
+    private init() { email = keychain.get("email") }
     
-    private var email: String = "defaultemail@nomail.com"
+    private(set) var email: String?
     private(set) var allMemesArray: [Meme] = []
     private(set) var favMemesArray: [Meme] = []
+    let keychain = KeychainSwift()
     
     func setEmail(with email: String) {
         self.email = email
+        keychain.set(email, forKey: "email")
     }
     func addMeme(meme: Meme) {
         favMemesArray.append(meme)
