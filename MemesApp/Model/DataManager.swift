@@ -35,6 +35,38 @@ final class DataManager {
         NotificationCenter.default.post(name: .MemeDeleted, object: nil)
     }
     
+    func saveFavMemes(for user: String) {
+        var documentsUrl = Utils.pathInDocument(with: user)
+        if !FileManager.default.fileExists(atPath: String(describing: documentsUrl) ) {
+            do {
+                try FileManager.default.createDirectory(at: documentsUrl, withIntermediateDirectories: true)
+                print("Directory \(documentsUrl) was created")
+            } catch {
+                print("Directory wasnt created")
+            }
+        }
+        ///////////// DOESN'T WORK
+        guard let dataMemesArray = (allMemesArray) as? Data else { print("cannot convert to data"); return }
+        
+        documentsUrl.appendPathComponent(Utils.fileName)
+        do {
+            try dataMemesArray.write(to: documentsUrl)
+            print("File was saved")
+        } catch { print("file wasnt saved") }
+    }
+    
+    func loadFavMemes(for user: String) {
+        
+        var pathToLoad = Utils.pathInDocument(with: user)
+        pathToLoad.appendPathComponent(Utils.fileName)
+        do {
+          // let dataArray = try Array
+        } catch {
+           print("Loading failed")
+        }
+        
+    }
+    
     func setAllMemesArray(with array: [Meme]) {
         allMemesArray.removeAll()
         allMemesArray = array

@@ -18,6 +18,7 @@ class FavMemesCollectionViewController: UICollectionViewController {
         collectionView?.register(MemeCollectionViewCell.nib, forCellWithReuseIdentifier: MemeCollectionViewCell.reuseID)
         NotificationCenter.default.addObserver(self, selector: #selector(memeAdded), name: .MemeAdded, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(memeDeleted), name: .MemeDeleted, object: nil)
+        
     }
     
     func refreshData() {
