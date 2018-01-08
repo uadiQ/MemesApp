@@ -16,6 +16,8 @@ class FavMemesCollectionViewController: UICollectionViewController {
         super.viewDidLoad()
         title = "Favourites"
         collectionView?.register(MemeCollectionViewCell.nib, forCellWithReuseIdentifier: MemeCollectionViewCell.reuseID)
+        guard let emailToLoad = DataManager.instance.email else { return }
+        DataManager.instance.loadFavMemes(for: emailToLoad)
         NotificationCenter.default.addObserver(self, selector: #selector(memeAdded), name: .MemeAdded, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(memeDeleted), name: .MemeDeleted, object: nil)
         

@@ -14,8 +14,9 @@ struct Utils {
         return path
     }
     static let fileName = "memesArray"
-    static func pathInDocument(with user: String) -> URL
-    {
-        return documentsUrl.appendPathComponent(user)
+    static func pathInDocument(with user: String) -> URL {
+        var pathToSend = documentsUrl
+        pathToSend.appendPathComponent(user)
+        return pathToSend
     }
 }
