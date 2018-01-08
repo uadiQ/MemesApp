@@ -37,7 +37,7 @@ final class DataManager {
     
     func saveFavMemes(for user: String) {
         var documentsUrl = Utils.pathInDocument(with: user)
-        if !FileManager.default.fileExists(atPath: String(describing: documentsUrl) ) {
+        if !FileManager.default.fileExists(atPath: documentsUrl.path) {
             do {
                 try FileManager.default.createDirectory(at: documentsUrl, withIntermediateDirectories: true)
                 print("Directory \(documentsUrl) was created")
