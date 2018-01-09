@@ -21,9 +21,10 @@ class MemeCollectionViewCell: UICollectionViewCell {
         super.awakeFromNib()
     }
 
-    func update(meme: Meme) {
+    //func update(meme: Meme)
+    func update(memeName: String, memeUrl: URL) {
         ibMemeImage.image = #imageLiteral(resourceName: "placeholder")
-        ibMemeTitle.text = meme.name
-        self.ibMemeImage.af_setImage(withURL: meme.url, placeholderImage: #imageLiteral(resourceName: "placeholder"))
+        ibMemeTitle.text = memeName
+        self.ibMemeImage.af_setImage(withURL: memeUrl, placeholderImage: #imageLiteral(resourceName: "placeholder"))
     }
 }

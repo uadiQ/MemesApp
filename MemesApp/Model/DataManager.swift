@@ -32,6 +32,7 @@ final class DataManager {
     
     func deleteMeme(at index: Int) {
         favMemesArray.remove(at: index)
+        
         NotificationCenter.default.post(name: .MemeDeleted, object: nil)
     }
     
@@ -48,20 +49,24 @@ final class DataManager {
         
         documentsUrl.appendPathComponent(Utils.fileName)
         (favMemesArray as NSArray).write(to: documentsUrl, atomically: true)
-            print("File was saved")
+        print("File was saved")
     }
     
     func loadFavMemes(for user: String) {
         
         var pathToLoad = Utils.pathInDocument(with: user)
         pathToLoad.appendPathComponent(Utils.fileName)
-            guard let arrayToLoad = NSArray(contentsOf: pathToLoad) as? [Meme] else {print( "failed"); return}
-            setFavMemesArray(with: arrayToLoad)
+        guard let arrayToLoad = NSArray(contentsOf: pathToLoad) as? [Meme] else {print( "failed"); return}
+        setFavMemesArray(with: arrayToLoad)
     }
     
     func setFavMemesArray(with array: [Meme]) {
         favMemesArray.removeAll()
         favMemesArray = array
+    }
+    
+    func isPresentInArray(_ meme: Meme) -> Bool {
+        return allMemesArray.contains(meme)
     }
     
     func loadAllMemes() {
@@ -72,7 +77,9 @@ final class DataManager {
                 guard let memesJSONArray = jsonResponse["data"]["memes"].array else { fatalError("Didn't turn into array") }
                 for jsonMeme in memesJSONArray {
                     guard let meme = Meme(json: jsonMeme) else { print("Meme hasn't been created"); continue }
-                    self.allMemesArray.append(meme)
+                    if !self.isPresentInArray(meme) {
+                        self.allMemesArray.append(meme)
+                    }
                 }
                 print(self.allMemesArray)
                 NotificationCenter.default.post(name: .AllMemesLoaded, object: nil)
