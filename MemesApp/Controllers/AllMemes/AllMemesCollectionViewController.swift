@@ -50,12 +50,10 @@ extension AllMemesCollectionViewController {
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         DataManager.instance.addMeme(meme: DataManager.instance.allMemesArray[indexPath.item])
-        
-        ///////////// FILEMANAGER TESTING
+
         guard let email = DataManager.instance.email else { return }
-        DataManager.instance.saveFavMemes(for: email)
-        //////////////////////
-        
+
+
         navigationController?.popViewController(animated: true)
     }
     

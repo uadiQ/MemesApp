@@ -27,6 +27,8 @@ final class DataManager {
     }
     func addMeme(meme: Meme) {
         favMemesArray.append(meme)
+        guard let emailToSave = email else {debugPrint("no email to save to"); return }
+        saveFavMemes(for: emailToSave)
         NotificationCenter.default.post(name: .MemeAdded, object: nil)
     }
     
@@ -37,26 +39,30 @@ final class DataManager {
     }
     
     func saveFavMemes(for user: String) {
-        var documentsUrl = Utils.pathInDocument(with: user)
-        if !FileManager.default.fileExists(atPath: documentsUrl.path) {
+        var pathToSave = Utils.pathInDocument(with: user)
+        if !FileManager.default.fileExists(atPath: pathToSave.path) {
             do {
-                try FileManager.default.createDirectory(at: documentsUrl, withIntermediateDirectories: true)
-                print("Directory \(documentsUrl) was created")
+                try FileManager.default.createDirectory(at: pathToSave, withIntermediateDirectories: true)
+                print("Directory \(pathToSave) was created")
             } catch {
                 print("Directory wasnt created")
             }
         }
         
-        documentsUrl.appendPathComponent(Utils.fileName)
-        (favMemesArray as NSArray).write(to: documentsUrl, atomically: true)
-        print("File was saved")
+        pathToSave.appendPathComponent(Utils.fileName)
+        let success = NSKeyedArchiver.archiveRootObject([allMemesArray], toFile: String(describing: pathToSave))
+        if !success {
+            debugPrint("Failed to save fav memes")
+        }
+//        (favMemesArray as NSArray).write(to: documentsUrl, atomically: true)
+//        print("File was saved")
     }
     
     func loadFavMemes(for user: String) {
         
         var pathToLoad = Utils.pathInDocument(with: user)
         pathToLoad.appendPathComponent(Utils.fileName)
-        guard let arrayToLoad = NSArray(contentsOf: pathToLoad) as? [Meme] else {print( "failed"); return}
+        guard let arrayToLoad = NSKeyedUnarchiver.unarchiveObject(withFile: String(describing: pathToLoad)) as? [Meme] else {print( "failed to load fav memes from file"); return}
         setFavMemesArray(with: arrayToLoad)
     }
     
@@ -66,7 +72,10 @@ final class DataManager {
     }
     
     func isPresentInArray(_ meme: Meme) -> Bool {
-        return allMemesArray.contains(meme)
+        for item in allMemesArray where meme.id == item.id {
+            return true
+        }
+        return false
     }
     
     func loadAllMemes() {
@@ -81,7 +90,6 @@ final class DataManager {
                         self.allMemesArray.append(meme)
                     }
                 }
-                print(self.allMemesArray)
                 NotificationCenter.default.post(name: .AllMemesLoaded, object: nil)
                 
             case .failure(let error):
