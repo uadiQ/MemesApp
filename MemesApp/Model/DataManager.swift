@@ -45,58 +45,43 @@ final class DataManager {
     
     func saveFavMemes(for user: String) {
         
-         var pathToSave = Utils.pathInDocument(with: user)
-         if !FileManager.default.fileExists(atPath: pathToSave.path) {
-         do {
-         try FileManager.default.createDirectory(at: pathToSave, withIntermediateDirectories: true)
-         print("Directory \(pathToSave) was created")
-         } catch {
-         print("Directory wasnt created")
-         }
-         }
-         pathToSave.appendPathComponent(Utils.fileName)
-         let success = NSKeyedArchiver.archiveRootObject([favMemesArray], toFile: String(describing: pathToSave))
-         if !success {
-         debugPrint("Failed to save fav memes")
-         }
-         //        (favMemesArray as NSArray).write(to: documentsUrl, atomically: true)
-         //        print("File was saved")
- 
-        /*
-        guard let emailToSave = email else { print("no email to save to"); return }
-        let dataBlob = NSKeyedArchiver.archivedData(withRootObject: favMemesArray)
-        UserDefaults.standard.set(dataBlob, forKey: emailToSave)
-        UserDefaults.standard.synchronize()
-        */
+        var pathToSave = Utils.pathInDocument(with: user)
+        if !FileManager.default.fileExists(atPath: pathToSave.path) {
+            do {
+                try FileManager.default.createDirectory(at: pathToSave, withIntermediateDirectories: true)
+                print("Directory \(pathToSave) was created")
+            } catch {
+                print("Directory wasnt created")
+            }
+        }
+        pathToSave.appendPathComponent(Utils.fileName)
+        let success = NSKeyedArchiver.archiveRootObject([favMemesArray], toFile: pathToSave.path)
+        if !success {
+            debugPrint("Failed to save fav memes")
+        }
+        
+//                        (favMemesArray as NSArray).write(to: pathToSave, atomically: true)
+//                       print("File was saved")
+        
     }
     
     func loadFavMemes(for user: String) {
+        var pathToLoad = Utils.pathInDocument(with: user)
+        pathToLoad.appendPathComponent(Utils.fileName)
+        guard let arrayToLoad = NSKeyedUnarchiver.unarchiveObject(withFile: pathToLoad.path) as? [Meme] else {
+            print("Loading from file failed")
+            return
+        }
         
-         var pathToLoad = Utils.pathInDocument(with: user)
-         pathToLoad.appendPathComponent(Utils.fileName)
-         guard let arrayToLoad = NSKeyedUnarchiver.unarchiveObject(withFile: String(describing: pathToLoad)) as? [Meme] else {print( "failed to load fav memes from file"); return}
-         setFavMemesArray(with: arrayToLoad)
- 
-        /*
-        guard let emailToLoad = email else { return }
-        guard let decodedDataBlob = UserDefaults.standard.object(forKey: emailToLoad) as? Data else { print("no data loaded"); return }
-        guard let loadedMemesFromUserDefault = NSKeyedUnarchiver.unarchiveObject(with: decodedDataBlob) as? [Meme] else {print("no memes loaded"); return }
+       // guard let savedArray = NSArray(contentsOf: pathToLoad) as? [Meme] else {print("error"); return}
         
-        setFavMemesArray(with: loadedMemesFromUserDefault)
-        */
+        setFavMemesArray(with: arrayToLoad)
     }
     
     func setFavMemesArray(with array: [Meme]) {
         favMemesArray.removeAll()
         favMemesArray = array
     }
-    
-//    func isPresentInArray(_ meme: Meme) -> Bool {
-//        for item in allMemesArray where meme.id == item.id {
-//            return true
-//        }
-//        return false
-//    }
     
     func loadAllMemes() {
         Alamofire.request("https://api.imgflip.com/get_memes").responseJSON { response in
@@ -108,7 +93,7 @@ final class DataManager {
                 for jsonMeme in memesJSONArray {
                     guard let meme = Meme(json: jsonMeme) else { print("Meme hasn't been created"); continue }
                     //if !self.isPresentInArray(meme) {
-                        self.allMemesArray.append(meme)
+                    self.allMemesArray.append(meme)
                     //}
                 }
                 NotificationCenter.default.post(name: .AllMemesLoaded, object: nil)
