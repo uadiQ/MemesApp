@@ -14,7 +14,7 @@ import KeychainSwift
 
 final class DataManager {
     static let instance = DataManager()
-    private init() { email = keychain.get("email") }
+    private init() { email = keychain.get(Keys.email) }
     
     private(set) var email: String?
     private(set) var allMemesArray: [Meme] = []
@@ -23,8 +23,13 @@ final class DataManager {
     
     func setEmail(with email: String) {
         self.email = email
-        keychain.set(email, forKey: "email")
+        keychain.set(email, forKey: Keys.email)
     }
+    
+    func deleteEmail() {
+        keychain.delete(Keys.email)
+    }
+    
     func addMeme(meme: Meme) {
         favMemesArray.append(meme)
         guard let emailToSave = email else {debugPrint("no email to save to"); return }
@@ -39,31 +44,46 @@ final class DataManager {
     }
     
     func saveFavMemes(for user: String) {
-        var pathToSave = Utils.pathInDocument(with: user)
-        if !FileManager.default.fileExists(atPath: pathToSave.path) {
-            do {
-                try FileManager.default.createDirectory(at: pathToSave, withIntermediateDirectories: true)
-                print("Directory \(pathToSave) was created")
-            } catch {
-                print("Directory wasnt created")
-            }
-        }
         
-        pathToSave.appendPathComponent(Utils.fileName)
-        let success = NSKeyedArchiver.archiveRootObject([allMemesArray], toFile: String(describing: pathToSave))
-        if !success {
-            debugPrint("Failed to save fav memes")
-        }
-//        (favMemesArray as NSArray).write(to: documentsUrl, atomically: true)
-//        print("File was saved")
+         var pathToSave = Utils.pathInDocument(with: user)
+         if !FileManager.default.fileExists(atPath: pathToSave.path) {
+         do {
+         try FileManager.default.createDirectory(at: pathToSave, withIntermediateDirectories: true)
+         print("Directory \(pathToSave) was created")
+         } catch {
+         print("Directory wasnt created")
+         }
+         }
+         pathToSave.appendPathComponent(Utils.fileName)
+         let success = NSKeyedArchiver.archiveRootObject([favMemesArray], toFile: String(describing: pathToSave))
+         if !success {
+         debugPrint("Failed to save fav memes")
+         }
+         //        (favMemesArray as NSArray).write(to: documentsUrl, atomically: true)
+         //        print("File was saved")
+ 
+        /*
+        guard let emailToSave = email else { print("no email to save to"); return }
+        let dataBlob = NSKeyedArchiver.archivedData(withRootObject: favMemesArray)
+        UserDefaults.standard.set(dataBlob, forKey: emailToSave)
+        UserDefaults.standard.synchronize()
+        */
     }
     
     func loadFavMemes(for user: String) {
         
-        var pathToLoad = Utils.pathInDocument(with: user)
-        pathToLoad.appendPathComponent(Utils.fileName)
-        guard let arrayToLoad = NSKeyedUnarchiver.unarchiveObject(withFile: String(describing: pathToLoad)) as? [Meme] else {print( "failed to load fav memes from file"); return}
-        setFavMemesArray(with: arrayToLoad)
+         var pathToLoad = Utils.pathInDocument(with: user)
+         pathToLoad.appendPathComponent(Utils.fileName)
+         guard let arrayToLoad = NSKeyedUnarchiver.unarchiveObject(withFile: String(describing: pathToLoad)) as? [Meme] else {print( "failed to load fav memes from file"); return}
+         setFavMemesArray(with: arrayToLoad)
+ 
+        /*
+        guard let emailToLoad = email else { return }
+        guard let decodedDataBlob = UserDefaults.standard.object(forKey: emailToLoad) as? Data else { print("no data loaded"); return }
+        guard let loadedMemesFromUserDefault = NSKeyedUnarchiver.unarchiveObject(with: decodedDataBlob) as? [Meme] else {print("no memes loaded"); return }
+        
+        setFavMemesArray(with: loadedMemesFromUserDefault)
+        */
     }
     
     func setFavMemesArray(with array: [Meme]) {

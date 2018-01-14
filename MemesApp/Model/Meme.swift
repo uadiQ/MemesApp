@@ -11,7 +11,7 @@ import SwiftyJSON
 import Alamofire
 import AlamofireImage
 
-class Meme: NSObject, NSCoding /*Equatable*/ {
+class Meme: NSObject, NSCoding {
     
     var id: Int
     var url: URL
@@ -25,6 +25,7 @@ class Meme: NSObject, NSCoding /*Equatable*/ {
         self.name = name
         self.height = height
         self.width = width
+        super.init()
     }
     
     init?(json: JSON) {
@@ -34,14 +35,15 @@ class Meme: NSObject, NSCoding /*Equatable*/ {
         self.id = json["id"].intValue
         self.width = json["width"].intValue
         self.url = url
+        super.init()
     }
-    
-    func encode(with coder: NSCoder) {
-        coder.encode(id, forKey: Keys.id)
-        coder.encode(url, forKey: Keys.url)
-        coder.encode(name, forKey: Keys.name)
-        coder.encode(height, forKey: Keys.height)
-        coder.encode(width, forKey: Keys.width)
+
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(self.id, forKey: Keys.id)
+        aCoder.encode(self.url, forKey: Keys.url)
+        aCoder.encode(self.name, forKey: Keys.name)
+        aCoder.encode(self.height, forKey: Keys.height)
+        aCoder.encode(self.width, forKey: Keys.width)
     }
     
     required convenience init?(coder decoder: NSCoder) {
@@ -56,9 +58,3 @@ class Meme: NSObject, NSCoding /*Equatable*/ {
         
     }
 }
-
-//extension Meme {
-//    static func == (lhs: Meme, rhs: Meme) -> Bool {
-//        return lhs.id == rhs.id
-//    }
-//}

@@ -14,4 +14,6 @@ struct Keys {
     static let name = "name"
     static let height = "height"
     static let width = "width"
+    
+    static let email = "email"
 }

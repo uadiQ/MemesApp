@@ -38,6 +38,9 @@ class FavMemesCollectionViewController: UICollectionViewController {
         destVC.meme = sender as? Meme
     }
     
+    @IBAction func logoutPushed(_ sender: Any) {
+        
+    }
 }
 
 // MARK: - UICollectionViewDataSource & UICollectionViewDelegate
