@@ -91,12 +91,12 @@ final class DataManager {
         favMemesArray = array
     }
     
-    func isPresentInArray(_ meme: Meme) -> Bool {
-        for item in allMemesArray where meme.id == item.id {
-            return true
-        }
-        return false
-    }
+//    func isPresentInArray(_ meme: Meme) -> Bool {
+//        for item in allMemesArray where meme.id == item.id {
+//            return true
+//        }
+//        return false
+//    }
     
     func loadAllMemes() {
         Alamofire.request("https://api.imgflip.com/get_memes").responseJSON { response in
@@ -104,11 +104,12 @@ final class DataManager {
             case .success(let value):
                 let jsonResponse = JSON(value)
                 guard let memesJSONArray = jsonResponse["data"]["memes"].array else { fatalError("Didn't turn into array") }
+                self.allMemesArray.removeAll()
                 for jsonMeme in memesJSONArray {
                     guard let meme = Meme(json: jsonMeme) else { print("Meme hasn't been created"); continue }
-                    if !self.isPresentInArray(meme) {
+                    //if !self.isPresentInArray(meme) {
                         self.allMemesArray.append(meme)
-                    }
+                    //}
                 }
                 NotificationCenter.default.post(name: .AllMemesLoaded, object: nil)
                 
