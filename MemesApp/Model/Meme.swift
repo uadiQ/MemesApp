@@ -12,7 +12,7 @@ import Alamofire
 import AlamofireImage
 
 class Meme: NSObject, NSCoding {
-    
+
     var id: Int
     var url: URL
     var name: String
@@ -45,7 +45,7 @@ class Meme: NSObject, NSCoding {
         aCoder.encode(self.height, forKey: Keys.height)
         aCoder.encode(self.width, forKey: Keys.width)
     }
-    
+
     required convenience init?(coder decoder: NSCoder) {
         guard let objectId = decoder.decodeObject(forKey: Keys.id) as? Int else { return nil }
         guard let objectUrl = decoder.decodeObject(forKey: Keys.url) as? URL else { return nil }
@@ -55,6 +55,12 @@ class Meme: NSObject, NSCoding {
         //else { debugPrint("couldn't decode"); return }
         
         self.init(id: objectId, url: objectUrl, name: objectName, height: objectHeight, width: objectWidth)
-        
+
     }
 }
+
+//extension Meme {
+//    static func == (lhs: Meme, rhs: Meme) -> Bool {
+//        return lhs.id == rhs.id
+//    }
+//}

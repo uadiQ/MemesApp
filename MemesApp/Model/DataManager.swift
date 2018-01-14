@@ -44,7 +44,6 @@ final class DataManager {
     }
     
     func saveFavMemes(for user: String) {
-        
         var pathToSave = Utils.pathInDocument(with: user)
         if !FileManager.default.fileExists(atPath: pathToSave.path) {
             do {
