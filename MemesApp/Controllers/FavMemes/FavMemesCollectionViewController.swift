@@ -39,7 +39,7 @@ class FavMemesCollectionViewController: UICollectionViewController {
     }
     
     @IBAction func logoutPushed(_ sender: Any) {
-        
+        DataManager.instance.deleteEmail()
     }
 }
 

@@ -12,12 +12,12 @@ import Alamofire
 import AlamofireImage
 
 class Meme: NSObject, NSCoding {
-
-    var id: Int
-    var url: URL
-    var name: String
-    var height: Int
-    var width: Int
+    
+    let id: Int
+    let url: URL
+    let name: String
+    let height: Int
+    let width: Int
     
     init(id: Int, url: URL, name: String, height: Int, width: Int) {
         self.id = id
@@ -37,25 +37,27 @@ class Meme: NSObject, NSCoding {
         self.url = url
         super.init()
     }
-
+    
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(self.id, forKey: Keys.id)
+        aCoder.encode(String(self.id), forKey: Keys.id)
         aCoder.encode(self.url, forKey: Keys.url)
         aCoder.encode(self.name, forKey: Keys.name)
-        aCoder.encode(self.height, forKey: Keys.height)
-        aCoder.encode(self.width, forKey: Keys.width)
+        aCoder.encode(String(self.height), forKey: Keys.height)
+        aCoder.encode(String(self.width), forKey: Keys.width)
     }
-
+    
     required convenience init?(coder decoder: NSCoder) {
-        guard let objectId = decoder.decodeObject(forKey: Keys.id) as? Int else { return nil }
+        guard let strObjectId = decoder.decodeObject(forKey: Keys.id) as? String,
+              let objectId = Int(strObjectId) else { return nil }
         guard let objectUrl = decoder.decodeObject(forKey: Keys.url) as? URL else { return nil }
         guard let objectName = decoder.decodeObject(forKey: Keys.name) as? String else { return nil }
-        guard let objectHeight = decoder.decodeObject(forKey: Keys.height) as? Int else { return nil }
-        guard let objectWidth = decoder.decodeObject(forKey: Keys.width) as? Int else { return nil }
+        guard let strObjectHeight = decoder.decodeObject(forKey: Keys.height) as? String,
+        let objectHeight = Int(strObjectHeight) else { return nil }
+        guard let strObjectWidth = decoder.decodeObject(forKey: Keys.width) as? String,
+        let objectWidth = Int(strObjectWidth) else { return nil }
         //else { debugPrint("couldn't decode"); return }
-        
         self.init(id: objectId, url: objectUrl, name: objectName, height: objectHeight, width: objectWidth)
-
+        
     }
 }
 

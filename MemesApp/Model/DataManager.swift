@@ -18,7 +18,12 @@ final class DataManager {
     
     private(set) var email: String?
     private(set) var allMemesArray: [Meme] = []
-    private(set) var favMemesArray: [Meme] = []
+    private(set) var favMemesArray: [Meme] = [] {
+        didSet {
+            guard let emailToSave = email else { return }
+            saveFavMemes(for: emailToSave)
+        }
+    }
     let keychain = KeychainSwift()
     
     func setEmail(with email: String) {
@@ -32,8 +37,6 @@ final class DataManager {
     
     func addMeme(meme: Meme) {
         favMemesArray.append(meme)
-        guard let emailToSave = email else {debugPrint("no email to save to"); return }
-        saveFavMemes(for: emailToSave)
         NotificationCenter.default.post(name: .MemeAdded, object: nil)
     }
     
@@ -54,13 +57,13 @@ final class DataManager {
             }
         }
         pathToSave.appendPathComponent(Utils.fileName)
-        let success = NSKeyedArchiver.archiveRootObject([favMemesArray], toFile: pathToSave.path)
+        let success = NSKeyedArchiver.archiveRootObject(favMemesArray, toFile: pathToSave.path)
         if !success {
             debugPrint("Failed to save fav memes")
         }
         
-//                        (favMemesArray as NSArray).write(to: pathToSave, atomically: true)
-//                       print("File was saved")
+        //                        (favMemesArray as NSArray).write(to: pathToSave, atomically: true)
+        //                       print("File was saved")
         
     }
     
@@ -72,7 +75,7 @@ final class DataManager {
             return
         }
         
-       // guard let savedArray = NSArray(contentsOf: pathToLoad) as? [Meme] else {print("error"); return}
+        // guard let savedArray = NSArray(contentsOf: pathToLoad) as? [Meme] else {print("error"); return}
         
         setFavMemesArray(with: arrayToLoad)
     }
