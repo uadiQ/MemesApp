@@ -14,35 +14,35 @@ import KeychainSwift
 
 final class DataManager {
     static let instance = DataManager()
-    private init() { email = keychain.get(Keys.email) }
+    private init() { email = keychain.get(Utils.email) }
     
     private(set) var email: String?
     private(set) var allMemesArray: [Meme] = []
-    private(set) var favMemesArray: [Meme] = [] {
-        didSet {
-            guard let emailToSave = email else { return }
-            saveFavMemes(for: emailToSave)
-        }
-    }
+    private(set) var favMemesArray: [Meme] = []
     let keychain = KeychainSwift()
     
     func setEmail(with email: String) {
         self.email = email
-        keychain.set(email, forKey: Keys.email)
+        keychain.set(email, forKey: Utils.email)
     }
     
-    func deleteEmail() {
-        keychain.delete(Keys.email)
+    func logout() {
+        keychain.delete(Utils.email)
+        email = nil
+        favMemesArray.removeAll()
     }
     
     func addMeme(meme: Meme) {
         favMemesArray.append(meme)
+        guard let emailToSave = email else { return }
+        saveFavMemes(for: emailToSave)
         NotificationCenter.default.post(name: .MemeAdded, object: nil)
     }
     
     func deleteMeme(at index: Int) {
         favMemesArray.remove(at: index)
-        
+        guard let emailToSave = email else { return }
+        saveFavMemes(for: emailToSave)
         NotificationCenter.default.post(name: .MemeDeleted, object: nil)
     }
     
@@ -61,22 +61,16 @@ final class DataManager {
         if !success {
             debugPrint("Failed to save fav memes")
         }
-        
-        //                        (favMemesArray as NSArray).write(to: pathToSave, atomically: true)
-        //                       print("File was saved")
-        
     }
     
     func loadFavMemes(for user: String) {
+        favMemesArray.removeAll()
         var pathToLoad = Utils.pathInDocument(with: user)
         pathToLoad.appendPathComponent(Utils.fileName)
         guard let arrayToLoad = NSKeyedUnarchiver.unarchiveObject(withFile: pathToLoad.path) as? [Meme] else {
             print("Loading from file failed")
             return
         }
-        
-        // guard let savedArray = NSArray(contentsOf: pathToLoad) as? [Meme] else {print("error"); return}
-        
         setFavMemesArray(with: arrayToLoad)
     }
     
@@ -103,7 +97,6 @@ final class DataManager {
             case .failure(let error):
                 print(error)
             }
-            
         }
     }
     

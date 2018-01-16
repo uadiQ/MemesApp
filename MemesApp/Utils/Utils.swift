@@ -9,6 +9,9 @@
 import UIKit
 
 struct Utils {
+    
+    static let email = "email"
+    
     static var documentsUrl: URL {
         guard let path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {fatalError("Smth went wrong")}
         return path

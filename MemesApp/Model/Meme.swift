@@ -13,6 +13,14 @@ import AlamofireImage
 
 class Meme: NSObject, NSCoding {
     
+    private struct Keys {
+        static let id = "id"
+        static let url = "url"
+        static let name = "name"
+        static let height = "height"
+        static let width = "width"
+    }
+    
     let id: Int
     let url: URL
     let name: String
@@ -49,18 +57,19 @@ class Meme: NSObject, NSCoding {
     required convenience init?(coder decoder: NSCoder) {
         guard let strObjectId = decoder.decodeObject(forKey: Keys.id) as? String,
               let objectId = Int(strObjectId) else { return nil }
+        
         guard let objectUrl = decoder.decodeObject(forKey: Keys.url) as? URL else { return nil }
         guard let objectName = decoder.decodeObject(forKey: Keys.name) as? String else { return nil }
         guard let strObjectHeight = decoder.decodeObject(forKey: Keys.height) as? String,
         let objectHeight = Int(strObjectHeight) else { return nil }
+        
         guard let strObjectWidth = decoder.decodeObject(forKey: Keys.width) as? String,
         let objectWidth = Int(strObjectWidth) else { return nil }
-        //else { debugPrint("couldn't decode"); return }
+        
         self.init(id: objectId, url: objectUrl, name: objectName, height: objectHeight, width: objectWidth)
         
     }
 }
-
 //extension Meme {
 //    static func == (lhs: Meme, rhs: Meme) -> Bool {
 //        return lhs.id == rhs.id

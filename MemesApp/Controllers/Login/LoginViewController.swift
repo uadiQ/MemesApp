@@ -17,7 +17,16 @@ class LoginViewController: UIViewController {
         super.viewDidLoad()
         loginTextField.delegate = self
         setupGestures()
-        loginTextField.text = DataManager.instance.email
+        fillTextField()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        fillTextField()
+    }
+    
+    private func fillTextField() {
+        loginTextField.text = DataManager.instance.email ?? ""
     }
     
     private func setupGestures() {
